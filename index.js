@@ -13,6 +13,8 @@ app.get("/", (req, res) => {
   res.send("It is a server for Assignment 10");
 });
 
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2zuqm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2zuqm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -30,13 +32,18 @@ async function run() {
     await client.connect();
 
     const database = client.db("usersDB").collection("users");
+    const database1 = client.db("usersDB").collection("campaigns");
+    const database2 = client.db("usersDB").collection("donations");
 
+    // API'S OF USERS COLLECTION STARTS HERE.
+    //  API FOR ALL USERS
     app.get("/users", async (req, res) => {
       const cursor = await database.find().toArray();
       res.send(cursor);
     });
 
-    app.get("/update/:id", async (req, res) => {
+    // API FOR SINGLE USER
+    app.get("/users/:id", async (req, res) => {
       const id = req.params.id;
       //   console.log("please delete the", id);
       const query = { _id: new ObjectId(id) };
@@ -44,13 +51,21 @@ async function run() {
       res.send(result);
     });
 
+    // API TO ADD NEW USER
     app.post("/users", async (req, res) => {
       const user = req.body;
       console.log("new user", user);
-      const result = await database.insertOne(user);
+      const doc = {
+        title: "Record of a Shriveled Datum",
+        content: "No bytes, no problem. Just insert a document, in MongoDB",
+      };
+
+      // console.log(data);
+      const result = await database.insertOne(doc);
       res.send(result);
     });
 
+    // API TO DELETE A USER
     app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
       console.log("please delete the", id);
@@ -58,6 +73,50 @@ async function run() {
       const result = await database.deleteOne(query);
       res.send(result);
     });
+
+    // API TO UPDATE USER'S DATA
+    app.put("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updataUser = {
+        $set: {
+          name: user.name,
+          email: user.email,
+        },
+      };
+      const result = await database.updateOne(filter, updataUser, option);
+
+      res.send(result);
+    });
+
+    // API'S OF CAMPAIGNS COLLECTION STARTS HERE.
+    // API'S FOR ALL CAMPAIGNS
+    app.get("/campaigns", async (req, res) => {
+      const cursor = await database1.find().toArray();
+      res.send(cursor);
+    });
+
+    // API FOR SINGLE CAMPAIGN
+
+    // API TO ADD NEW CAMPAIGN
+    app.post("/addCampaign", async (req, res) => {
+      const user = req.body;
+      console.log("new user", user);
+      const doc = {
+        title: "Record of a Shriveled Datum",
+        content: "No bytes, no problem. Just insert a document, in MongoDB",
+      };
+
+      // console.log(data);
+      const result = await database1.insertOne(doc);
+      res.send(result);
+    });
+    // API TO DELETE A CAMPAIGN
+
+    // API TO UPDATE CAMPAIGN'S DATA
+
+    // API
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
