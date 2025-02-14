@@ -113,11 +113,22 @@ async function run() {
       const result = await database1.insertOne(doc);
       res.send(result);
     });
+
     // API TO DELETE A CAMPAIGN
+    app.delete("/campaign/:id", async (req, res) => {});
 
     // API TO UPDATE CAMPAIGN'S DATA
+    app.put("/updateCampaign/:id", async (req, res) => {});
 
-    // API
+    // API FOR MY CAMPAIGN
+    app.get("/myCampaign", async (req, res) => {});
+
+    // API'S OF DONATION COLLECTION STARTS HERE.
+    // API FOR MY DONATION
+    app.get("/donations", async (req, res) => {});
+
+    // API FOR ADD DONATION
+    app.post("/donations", async (req, res) => {});
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
