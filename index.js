@@ -98,6 +98,7 @@ async function run() {
     });
 
     // API FOR SINGLE CAMPAIGN
+    app.get("/campaign/:id", async (req, res) => {});
 
     // API TO ADD NEW CAMPAIGN
     app.post("/addCampaign", async (req, res) => {
