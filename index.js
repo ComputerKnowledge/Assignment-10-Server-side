@@ -98,30 +98,62 @@ async function run() {
     });
 
     // API FOR SINGLE CAMPAIGN
-    app.get("/campaign/:id", async (req, res) => {});
+    app.get("/campaign/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await database1.findOne(query);
+      res.send(result);
+    });
 
     // API TO ADD NEW CAMPAIGN
     app.post("/addCampaign", async (req, res) => {
       const user = req.body;
       console.log("new user", user);
-      const doc = {
-        title: "Record of a Shriveled Datum",
-        content: "No bytes, no problem. Just insert a document, in MongoDB",
-      };
 
-      // console.log(data);
-      const result = await database1.insertOne(doc);
+      const result = await database1.insertOne(user);
       res.send(result);
     });
 
     // API TO DELETE A CAMPAIGN
-    app.delete("/campaign/:id", async (req, res) => {});
+    app.delete("/campaign/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await database1.deleteOne(query);
+      res.send(result);
+    });
 
     // API TO UPDATE CAMPAIGN'S DATA
-    app.put("/updateCampaign/:id", async (req, res) => {});
+    app.put("/updateCampaign/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updatedCampaign = req.body;
+      console;
+
+      const campaign = {
+        $set: {
+          title: updatedCampaign.title,
+          type: updatedCampaign.type,
+          description: updatedCampaign.description,
+          amount: updatedCampaign.amount,
+          date: updatedCampaign.date,
+          email: updatedCampaign.email,
+          name: updatedCampaign.name,
+        },
+      };
+      const result = await database1.updateOne(filter, campaign, option);
+      res.send(result);
+    });
 
     // API FOR MY CAMPAIGN
-    app.get("/myCampaign", async (req, res) => {});
+    app.get("/myCampaign/:email", async (req, res) => {
+      const email = req.params.email;
+      // console.log(email);
+      const query = { email: email };
+      const result = await database1.find(query).toArray();
+      res.send(result);
+    });
 
     // API'S OF DONATION COLLECTION STARTS HERE.
     // API FOR MY DONATION
