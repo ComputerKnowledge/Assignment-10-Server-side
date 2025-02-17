@@ -157,10 +157,21 @@ async function run() {
 
     // API'S OF DONATION COLLECTION STARTS HERE.
     // API FOR MY DONATION
-    app.get("/donations", async (req, res) => {});
+    app.get("/donations/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+
+      const cursor = await database2.find(query).toArray();
+      res.send(cursor);
+    });
 
     // API FOR ADD DONATION
-    app.post("/donations", async (req, res) => {});
+    app.post("/donations", async (req, res) => {
+      const data = req.body;
+      console.log(data);
+      const result = await database2.insertOne(data);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
