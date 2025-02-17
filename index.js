@@ -149,7 +149,7 @@ async function run() {
     // API FOR MY CAMPAIGN
     app.get("/myCampaign/:email", async (req, res) => {
       const email = req.params.email;
-      // console.log(email);
+
       const query = { email: email };
       const result = await database1.find(query).toArray();
       res.send(result);
