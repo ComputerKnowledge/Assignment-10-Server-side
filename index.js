@@ -97,6 +97,20 @@ async function run() {
       res.send(cursor);
     });
 
+    // API FOR ACTIVE CAMPAIGN
+    app.get("/activeCampaigns", async (req, res) => {
+      const currentDate = new Date().toISOString().split("T")[0];
+      // console.log(currentDate);
+
+      const query = {
+        date: { $gt: currentDate },
+      };
+      const option = {
+        $limit: 2,
+      };
+      const result = await database1.find(query, option).limit(2).toArray();
+      res.send(result);
+    });
     // API FOR SINGLE CAMPAIGN
     app.get("/campaign/:id", async (req, res) => {
       const id = req.params.id;
