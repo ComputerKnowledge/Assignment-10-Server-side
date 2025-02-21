@@ -31,64 +31,8 @@ async function run() {
     // Connect the client to the server (optional starting in v4.7)
     await client.connect();
 
-    const database = client.db("usersDB").collection("users");
     const database1 = client.db("usersDB").collection("campaigns");
     const database2 = client.db("usersDB").collection("donations");
-
-    // API'S OF USERS COLLECTION STARTS HERE.
-    //  API FOR ALL USERS
-    app.get("/users", async (req, res) => {
-      const cursor = await database.find().toArray();
-      res.send(cursor);
-    });
-
-    // API FOR SINGLE USER
-    app.get("/users/:id", async (req, res) => {
-      const id = req.params.id;
-      //   console.log("please delete the", id);
-      const query = { _id: new ObjectId(id) };
-      const result = await database.findOne(query);
-      res.send(result);
-    });
-
-    // API TO ADD NEW USER
-    app.post("/users", async (req, res) => {
-      const user = req.body;
-      console.log("new user", user);
-      const doc = {
-        title: "Record of a Shriveled Datum",
-        content: "No bytes, no problem. Just insert a document, in MongoDB",
-      };
-
-      // console.log(data);
-      const result = await database.insertOne(doc);
-      res.send(result);
-    });
-
-    // API TO DELETE A USER
-    app.delete("/users/:id", async (req, res) => {
-      const id = req.params.id;
-      console.log("please delete the", id);
-      const query = { _id: new ObjectId(id) };
-      const result = await database.deleteOne(query);
-      res.send(result);
-    });
-
-    // API TO UPDATE USER'S DATA
-    app.put("/users/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: new ObjectId(id) };
-      const option = { upsert: true };
-      const updataUser = {
-        $set: {
-          name: user.name,
-          email: user.email,
-        },
-      };
-      const result = await database.updateOne(filter, updataUser, option);
-
-      res.send(result);
-    });
 
     // API'S OF CAMPAIGNS COLLECTION STARTS HERE.
     // API'S FOR ALL CAMPAIGNS
@@ -103,18 +47,16 @@ async function run() {
       // console.log(currentDate);
 
       const query = {
-        date: { $gt: currentDate },
+        date: { $gte: currentDate },
       };
-      const option = {
-        $limit: 2,
-      };
-      const result = await database1.find(query, option).limit(2).toArray();
+
+      const result = await database1.find(query).limit(6).toArray();
       res.send(result);
     });
     // API FOR SINGLE CAMPAIGN
     app.get("/campaign/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+      // console.log(id);
       const query = { _id: new ObjectId(id) };
       const result = await database1.findOne(query);
       res.send(result);
@@ -123,7 +65,7 @@ async function run() {
     // API TO ADD NEW CAMPAIGN
     app.post("/addCampaign", async (req, res) => {
       const user = req.body;
-      console.log("new user", user);
+      // console.log("new user", user);
 
       const result = await database1.insertOne(user);
       res.send(result);
@@ -143,7 +85,6 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const option = { upsert: true };
       const updatedCampaign = req.body;
-      console;
 
       const campaign = {
         $set: {
@@ -173,7 +114,7 @@ async function run() {
     // API FOR MY DONATION
     app.get("/donations/:email", async (req, res) => {
       const email = req.params.email;
-      const query = { email: email };
+      const query = { Usr: email };
 
       const cursor = await database2.find(query).toArray();
       res.send(cursor);
@@ -182,16 +123,17 @@ async function run() {
     // API FOR ADD DONATION
     app.post("/donations", async (req, res) => {
       const data = req.body;
-      console.log(data);
+      // console.log(data);
+
       const result = await database2.insertOne(data);
       res.send(result);
     });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
@@ -200,5 +142,5 @@ async function run() {
 run().catch(console.dir);
 
 app.listen(port, () => {
-  console.log(`The port number is ${port}`);
+  // console.log(`The port number is ${port}`);
 });
